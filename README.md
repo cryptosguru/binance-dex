@@ -3,9 +3,8 @@ Binance Dex
 
 
 Binance Decentralized Exchange
-----------------
-We are submitting this project as a part of the [Binance DEXathon](https://medium.com/binanceexchange/binance-dexathon-845dc0cbfffe),
-a coding competition held by Binance with the goal of building a Decentralized exchange. Our implementation of a
+*************************************
+Our implementation of a
 decentralized exchange is built off of Bitcoin, with many major changes to certain inner workings of bitcoin that
 improve its scalability.
 
@@ -49,7 +48,7 @@ in the bitcoin repo, we ended up completely removing Proof-of-Work from bitcoin,
 
 #### Proof-of-Stake (PoS)
 Proof-of-Stake is, in theory, much faster than Proof-of-Work and is in general very fast. However, there are currently
-no implementations of Proof-of-Stake that correctly address the Nothing at Stake Problem well. [Casper FFG](https://arxiv.org/abs/1710.09437),
+no implementations of Proof-of-Stake that correctly address the Nothing at Stake Problem well.
 the consensus algorithm proposed by Vitalik Buterin and Virgil Griffith, addresses many of the problems with naive Proof-of-Stake
 , including the Nothing at Stake problem but is very complicated and there are currently no working implementations. We
 decided that if the Casper Authors could not implement Casper on the platform they invented and wrote in almost a year,
@@ -88,10 +87,6 @@ we found a problem:
 These issues led to us not using NEO or dBFT, as we couldn't rely on the consensus algorithm being secure on a large network
 with public voting.
 
-#### Conclusion on consensus:
-We chose DPoS because it is simple, fast, and we had found solutions to the major consensus and governance issues that current
-implementations have.
-
 ### Order Matching
 
 Order matching is rarely a bottleneck for decentralized exchanges, since the consensus algorithm for distributed ledgers
@@ -100,24 +95,16 @@ the more a team knows their consensus algorithm and both its technical and crypt
 secure and decentralized the network will be. The throughput is determined by the choice of consensus algorithm, so we chose
 the one that was proven to be the fastest and had the potential to be the most secure, which was DPoS.
 
-The matching engine,
-at this point, was not the bottleneck anymore. We used an existing open-source matching engine, [LightMatchingEngine](https://github.com/gavincyi/LightMatchingEngine), that could obtain transactions
-through ZMQ (a subscription/notification system), construct the order book, and match orders faster than they can be placed
-on the blockchain.
-
 ### UTXOs vs Account-Based
 
 Some blockchains, such as bitcoin, use Unspent Transaction Outputs to keep track of whether or not a user can spend a certain
 amount of coins. This allows for bitcoin's many-to-many model and allows for much more scalability versus an account-based model.
 It would have been very difficult to implement an account-based model and would not have yielded many more benefits.
 
-We used the [Ethereum Design Rationale](https://github.com/ethereum/wiki/wiki/Design-Rationale) as a resource for this decision.
-
 ### Choice of the bitcoin repo and changes made
 
 We chose the bitcoin repo because, aside from Proof-of-Work, it is an extremely robust, secure, and very scalable cryptocurrency.
-We had some challenges when implementing multiple assets and premine, but for the most part it "just worked". When we were deciding how to start,
-were not aware that MIT DCI had the [CryptoKernel](https://github.com/mit-dci/CryptoKernel), which is an extremely interesting innovation.
+We had some challenges when implementing multiple assets and premine, but for the most part it "just worked".
 
 Improvements, challenges, what the ideal DEX looks like, and how to make it.
 ---------------
@@ -128,10 +115,7 @@ the **wrong** ways to build a decentralized exchange, and what it would take to 
 exchange.
 
 ### Challenges and Innovations
-
-Removing Proof-of-Work and adding in a new consensus algorithm was considerably difficult. When we started out, we talked to [Gavin Andresen](https://www.cics.umass.edu/ventures)
-in person about the challenges we were going to face when working with the Bitcoin repo. He gave valuable advice but warned about the difficulty of the project. One of those
-difficulties was dealing with UTXOs. Creating new types of transactions, such as VOTE and ENROLL, that were able to indicate certain DPoS specific actions, were easy to implement
+One of those difficulties was dealing with UTXOs. Creating new types of transactions, such as VOTE and ENROLL, that were able to indicate certain DPoS specific actions, were easy to implement
 but hard to add functionality to. We were stuck on how to count votes and ensure a correct DPoS implementation while still using UTXOs. We devised an algorithm to search through
 blocks as they come in and securely verify certain things about the network, such as balances, vote count, and addresses / nodes voted for. We iterate through transactions and
 use persistent storage, as well as network processing, to distribute this information and verify consistency across the network.
@@ -154,28 +138,6 @@ to an order transaction, and allowing order transactions to be provided as input
 allowing the matching engine to do the work of finding / matching trades, without necessarily requiring a matcher or witness to facilitate the trade. This is something that is not
 trivial to implement but possible.
 
-### What the ideal DEX looks like and how to make it:
-
-The ideal DEX is one where the users / nodes have control over their funds and trades, which is fast, secure, and easy to use.
-
-Implementations of decentralized exchanges which rely on non-mathematically provable operations are not secure. Bitcoin does a great job at using a process to correctly validate
-transactions, even if they include additional information, without using smart contracts or a balance-based accounting model. UTXOs increase the complexity of the problems that need
-to be solved but do not provide any detriment to efficiency or security. If we were building the ideal decentralized exchange we would use UTXOs. It would take longer to develop
-because it would be more complex, but it would be well worth the extra time spent in robustness and security. We would also make our proposed changes to delegated proof of stake and improve on the patchy current implementations of DPoS, such as Steem, EOS, and Lisk.
-
-Off-chain matching engines are the best solution to the problem of order matching as long as they are provably fair, and this is not difficult to implement as many provably fair
-matching algorithms use simple data structures such as queues to accomplish this task. These algorithms are very fast and would not bottleneck the number of trades executed
-on the network.
-
-Instead of using Bitcoin or any other existing cryptocurrency source, we learned that it would have been a better DEX implementation if we had started from scratch given the
-competition's time constraint. We originally thought we would not have been able to deliver it on time. One interesting development that would have been very useful is the
-[CryptoKernel](https://github.com/mit-dci/CryptoKernel), developed by the MIT DCI, which is essentially a barebones framework for creating a blockchain or cryptocurrency. This would have allowed us to more easily implement everything required for a decentralized exchange, as well as allowed us to create additional functionality on top of that.
-
-Overall, we learned a lot about cryptocurrencies, decentralized exchanges, and consensus algorithms, and we would like to continue development using this knowledge. We would be
-extremely interested in continuing this development based on the ideas we've discussed at Binance, and would like to know about any opportunities to work at Binance next summer for
-internships.
-
-
 Running a node using Docker
 ----------------
 The Dockerfile builds an image with all the dependencies installed on Ubuntu 16.04 LTS.
@@ -184,8 +146,7 @@ Note: The Image doesn't have the binance-dex repo, you'll have to git clone it. 
 1. Install Docker
 2. Build the image by running `docker build -t binance-dex:first .`
 3. To run image. `docker run -it -v <volume_name>:/home/ binance-dex:first`
-4. Now, `git clone "https://github.com/BSathvik/binance-dex"`
-5. Compile the repo
+4. Compile the repo
 
 
 Bitcoin Core integration/staging tree
@@ -194,34 +155,6 @@ Bitcoin Core integration/staging tree
 [![Build Status](https://travis-ci.org/bitcoin/bitcoin.svg?branch=master)](https://travis-ci.org/bitcoin/bitcoin)
 
 https://bitcoincore.org
-
-What is Bitcoin?
-----------------
-
-Bitcoin is an experimental digital currency that enables instant payments to
-anyone, anywhere in the world. Bitcoin uses peer-to-peer technology to operate
-with no central authority: managing transactions and issuing money are carried
-out collectively by the network. Bitcoin Core is the name of open source
-software which enables the use of this currency.
-
-For more information, as well as an immediately useable, binary version of
-the Bitcoin Core software, see https://bitcoin.org/en/download, or read the
-[original whitepaper](https://bitcoincore.org/bitcoin.pdf).
-
-License
--------
-
-Bitcoin Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
-information or see https://opensource.org/licenses/MIT.
-
-Development Process
--------------------
-
-The `master` branch is regularly built and tested, but is not guaranteed to be
-completely stable. [Tags](https://github.com/bitcoin/bitcoin/tags) are created
-regularly to indicate new official, stable release versions of Bitcoin Core.
-
-The contribution workflow is described in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Testing
 -------
@@ -244,23 +177,3 @@ These tests can be run (if the [test dependencies](/test) are installed) with: `
 
 The Travis CI system makes sure that every pull request is built for Windows, Linux, and OS X, and that unit/sanity tests are run automatically.
 
-### Manual Quality Assurance (QA) Testing
-
-Changes should be tested by somebody other than the developer who wrote the
-code. This is especially important for large or high-risk changes. It is useful
-to add a test plan to the pull request description if testing the changes is
-not straightforward.
-
-Translations
-------------
-
-Changes to translations as well as new translations can be submitted to
-[Bitcoin Core's Transifex page](https://www.transifex.com/projects/p/bitcoin/).
-
-Translations are periodically pulled from Transifex and merged into the git repository. See the
-[translation process](doc/translation_process.md) for details on how this works.
-
-**Important**: We do not accept translation changes as GitHub pull requests because the next
-pull from Transifex would automatically overwrite them again.
-
-Translators should also subscribe to the [mailing list](https://groups.google.com/forum/#!forum/bitcoin-translators).
